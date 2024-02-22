@@ -1,0 +1,32 @@
+name: Unit Tests on Windows
+
+on: [ push,pull_request ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          version: 12.2.0 # https://github.com/egor-tensin/setup-mingw/issues/14
+
+      - name: Print GCC version
+        run: gcc -v
+
+      - name: Print make version
+        run: make -v
+
+      - name: Compile
+        working-directory: unit_tests
+        run: make
+
+      - name: Run Tests on Windows
+        working-directory: unit_tests/
+        run: build/mpx_logic_test.exe
